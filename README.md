@@ -22,7 +22,7 @@ sudo apt-get install espeak
 
 ### 3. Clone this repository
 in a folder of your choice open a terminal and enter: \
-git clone ...
+git clone https://github.com/mar5chi/hand_gesture_control.git
 
 ### 4. Create virtual environment
 cd hand_gesture_control/ \
