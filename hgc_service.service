@@ -1,0 +1,14 @@
+[Unit]
+Description=HandGestureControlService
+After=multi-user.target
+
+[Service]
+ExecStart=/home/pi/hand_gesture_control/myvenv/bin/python3 /home/pi/hand_gesture_control/controls/itemControl.py
+WorkingDirectory=/home/pi/hand_gesture_control/controls
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=pi
+
+[Install]
+WantedBy=multi-user.target
