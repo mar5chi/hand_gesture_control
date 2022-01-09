@@ -1,5 +1,5 @@
 # hand_gesture_control
-A computer vision based hand gesture control for Smart Home appliances using OAK-D, depthai, Raspberry Pi.
+A computer vision based hand gesture control for Smart Home appliances using OAK-D, depthai, Raspberry Pi. It also gives an audio feedback if you connect speakers to your Pi.
 
 For information on depthai and OAK-D please visit https://docs.luxonis.com/en/latest/#.
 
