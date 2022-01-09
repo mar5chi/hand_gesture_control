@@ -32,7 +32,7 @@ pip install -U pip \
 python3 -m pip install -r requirements.txt
 
 ### 5. Run hand gesture control
-cd controls/
+cd controls/ \
 python3 itemControl.py
 
 ###  - Or add hgc_service
