@@ -38,6 +38,7 @@ python3 itemControl.py
 ###  - Or add hgc_service
 To run hand gesture control automatically after each reboot, \
 add hgc_service.service file into /etc/systemd/system \
+then enable the service using following command: \
 sudo systemctl enable hgc_service.service \
 To disable the service: \
 sudo systemctl disable hgc_service.service
