@@ -1,0 +1,2 @@
+class HgcException(Exception):
+    pass

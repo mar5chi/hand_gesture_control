@@ -30,8 +30,9 @@ import numpy as np
 import itemTree
 import sys
 import subprocess
+from HgcException import HgcException
 
-# For the audio feedback:
+# For audio feedback:
 speech_controller = SpeechController()
 
 # Stores the sequence of user selections:
@@ -46,20 +47,8 @@ try:
 except AttributeError:
     sys.exit("Item tree configuration not found")
 
-def trace(event):
-    event.print_line()
-
-def trace_rotation(event):
-	# TODO
-    event.print_line() 
-    print("Rotation:", event.hand.rotation) 
-
-def trace_index_finger_tip(event):
-    event.print_line() 
-    x, y = event.hand.landmarks[8,:2]
-    print(f"Index finger tip : x={x}  y={y}") 
-
 def select(index):
+    """ Handles the sequence of user selections. """
     global selections
     if 'area' not in selections:
         area_list = list(item_tree)
@@ -90,18 +79,22 @@ def select(index):
     print('------------') 
 
 def select_area(area):
-    """This is the function to select the area (e.g. kitchen, whole appartment, ...) 
-    according to item_tree configuration."""
+    """ This is the function to select the area (e.g. kitchen, whole appartment, ...) 
+    according to item_tree configuration. """
     selections['area'] = area
     audio_fb(f'You selected {area}, please select function.')
     print(f'area selected: {area}.')
 
 def select_function(function):
+    """ This is the function to select the function (e.g. light, blind, temperature, ...) 
+    according to item_tree configuration. """
     selections['function'] = function
     audio_fb(f'OK, which {function}?')
     print(f'function selected: {function}.')
 
 def select_item(item_key):
+    """ This is the function to select the item (e.g. dinner table light, ...) 
+    according to item_tree configuration. """
     global selections
     print(f'item selected: {item_key}.')
     item = item_tree[selections['area']][selections['function']][item_key] # dict
@@ -129,21 +122,35 @@ def select_item(item_key):
         audio_fb('Sorry, wrong item format. Please check configuration file or make another selection.')
 
 def handle_booltype():
+    global selections
     # GET current state:
-    current_state = iface.get_state(selections['item'])
-    print(f'current state: {current_state}.')
-    new_state = 'OFF'
-    if current_state == 'OFF':    	# toggle state ON/OFF
-        new_state = 'ON'
-    audio_fb(str(f'The {selections["function"]} is {current_state.lower()}. Do you like to switch it {new_state.lower()}?'))
-    selections['state'] = new_state
-    print(f'state selected: {selections["state"]}.')
+    try:
+        current_state = iface.get_state(selections['item'])
+        print(f'current state: {current_state}.')
+        new_state = 'OFF'
+        if current_state == 'OFF':    	# toggle state ON/OFF
+            new_state = 'ON'
+        audio_fb(str(f'The {selections["function"]} is {current_state.lower()}. Do you like to switch it {new_state.lower()}?'))
+        selections['state'] = new_state
+        print(f'state selected: {selections["state"]}.')
+    except HgcException as he:
+        audio_fb(f'Sorry, could not get current state. {he.args[0]} Please check connection to rest API.')
+        # Clear selections:
+        selections = {}
+        # TODO: maybe sys.exit(he.args[0]) after this?
 
 def handle_percentagetype():
+    global selections
     # GET current state:
-    current_state = iface.get_state(selections['item'])
-    print(f'current state: {current_state}.')
-    audio_fb(str(f'The {selections["function"]} is {current_state} percent. How much do you like?'))
+    try:
+        current_state = iface.get_state(selections['item'])
+        print(f'current state: {current_state}.')
+        audio_fb(str(f'The {selections["function"]} is {current_state} percent. How much do you like?'))
+    except HgcException as he:
+        audio_fb(f'Sorry, could not get current state. {he.args[0]} Please check connection to rest API.')
+        # Clear selections:
+        selections = {}
+        # TODO: maybe sys.exit(he.args[0]) after this?
 
 def trackbar(event):
     """ Sets numbers dynamically between 0 and 100, e.g. state for dimmer, blinds, temperature """
@@ -164,28 +171,35 @@ def trackbar(event):
     selections['state'] = str(value)
 
 def one(event):     # Kitchen, Lighting, item 1
+    """ Callback for pose ONE. """
     select(0)
 
 def two(event):     # Living Room, Blinds, item 2
+    """ Callback for pose TWO. """
     select(1)
     
 def three(event):   # Bedroom, item 3, ...
+    """ Callback for pose THREE. """
     select(2)
 	
 def four(event):    # Seminar Room, item 4, ...
+    """ Callback for pose FOUR. """
     select(3)
 	
 def five(event):    # IoT Lab, item 5, ...
+    """ Callback for pose FIVE. """
     select(4)
 	
 def six(event):     # Bathroom, item 6, ...
+    """ Callback for pose SIX. """
     select(5)
 
 def ten(event):     # Whole appartment central switches, item 10, ...
+    """ Callback for pose TEN. """
     select(9)
     
 def back(event):
-    """ Goes one step back """
+    """ Goes one step back. """
     event.print_line() 
     
     try:
@@ -209,18 +223,18 @@ def back(event):
     print('------------') 
 
 def quit_selections(event):
-    """ Quits all selections and starts from the beginning """
+    """ Quits all selections and starts from the beginning. """
     # Clear selections:
     selections = {}
 
 def audio_fb(text):
-    """ Gives auditive feedback """
+    """ Gives auditive feedback. """
     speech_controller.kill_proc()
     print(f'say: {text}')
     speech_controller.say(str(text))    # make sure text is a string for espeak
 
 def ok(event):
-    """ Completes the input """
+    """ Completes the input, posts state. """
     global selections
     event.print_line()
     print('selections: ') 
@@ -231,11 +245,14 @@ def ok(event):
     
     # Post state:
     if 'item' in selections and 'state' in selections:
-        r = iface.post_state(selections['item'], selections['state'])
+        try:
+            r = iface.post_state(selections['item'], selections['state'])
+        except HgcException as he:
+            r = f'Sorry, could not set state. {he.args[0]} Please check connection to rest API.'
+            # TODO: maybe sys.exit(he.args[0]) after this?
     else:
         print('ERROR: item or state missing.')
         r = 'Error: item or state missing.'
-        # TODO handling if item or state missing, e.g. when false recognition of ok,...
     audio_fb(f'Request is {r}.')
     print(f'Request is {r}.')
     
@@ -243,7 +260,7 @@ def ok(event):
     selections = {}
 
 def shut_down(event):
-    """Shuts down the raspberry pi"""
+    """ Shuts down the raspberry pi """
     subprocess.Popen(['sudo','shutdown','-h','now'])
 
 
