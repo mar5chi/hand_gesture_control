@@ -268,17 +268,17 @@ config = {
     'renderer' : {'enable': True},
     
     'pose_actions' : [
-        {'name': '1_right_enter', 'pose':'ONE', 'hand':'right', 'callback': 'one',"trigger":"enter", "first_trigger_delay":0.3},
-        {'name': '2_right_enter', 'pose':'TWO', 'hand':'right', 'callback': 'two',"trigger":"enter", "first_trigger_delay":0.3},
-        {'name': '3_right_enter', 'pose':'THREE', 'hand':'right', 'callback': 'three',"trigger":"enter", "first_trigger_delay":0.3},
-        {'name': '4_right_enter', 'pose':'FOUR', 'hand':'right', 'callback': 'four',"trigger":"enter", "first_trigger_delay":0.3},
-        {'name': '5_right_enter', 'pose':'FIVE', 'hand':'right', 'callback': 'five',"trigger":"enter", "first_trigger_delay":0.3},
-        {'name': '6_right_enter', 'pose':'SIX', 'hand':'right', 'callback': 'six',"trigger":"enter", "first_trigger_delay":0.3},
-        {'name': '10_right_enter', 'pose':'ALOHA', 'hand':'right', 'callback': 'ten',"trigger":"enter", "first_trigger_delay":0.3},
-        {'name': '11_right_enter', 'pose':'BACK', 'hand':'right', 'callback': 'back',"trigger":"enter", "first_trigger_delay":0.3},
-        {'name': '12_right_enter', 'pose':'OK', 'hand':'right', 'callback': 'ok',"trigger":"enter", "first_trigger_delay":0.3},
-        {'name': '13_right_enter', 'pose':'HORNS', 'hand':'right', 'callback': 'shut_down',"trigger":"enter", "first_trigger_delay":0.3},
-        {'name': 'trackbar_periodic', 'pose':'TRACK', 'hand':'right', 'callback': 'trackbar',"trigger":"periodic", "first_trigger_delay":0.5, "next_trigger_delay": 0.3},
+        {'name': '1_any_enter', 'pose':'ONE', 'hand':'any', 'callback': 'one',"trigger":"enter", "first_trigger_delay":0.3},
+        {'name': '2_any_enter', 'pose':'TWO', 'hand':'any', 'callback': 'two',"trigger":"enter", "first_trigger_delay":0.3},
+        {'name': '3_any_enter', 'pose':'THREE', 'hand':'any', 'callback': 'three',"trigger":"enter", "first_trigger_delay":0.3},
+        {'name': '4_any_enter', 'pose':'FOUR', 'hand':'any', 'callback': 'four',"trigger":"enter", "first_trigger_delay":0.3},
+        {'name': '5_any_enter', 'pose':'FIVE', 'hand':'any', 'callback': 'five',"trigger":"enter", "first_trigger_delay":0.3},
+        {'name': '6_any_enter', 'pose':'SIX', 'hand':'any', 'callback': 'six',"trigger":"enter", "first_trigger_delay":0.3},
+        {'name': '10_any_enter', 'pose':'ALOHA', 'hand':'any', 'callback': 'ten',"trigger":"enter", "first_trigger_delay":0.3},
+        {'name': '11_any_enter', 'pose':'BACK', 'hand':'any', 'callback': 'back',"trigger":"enter", "first_trigger_delay":0.3},
+        {'name': '12_any_enter', 'pose':'OK', 'hand':'any', 'callback': 'ok',"trigger":"enter", "first_trigger_delay":0.3},
+        {'name': '13_any_enter', 'pose':'HORNS', 'hand':'any', 'callback': 'shut_down',"trigger":"enter", "first_trigger_delay":1},
+        {'name': 'trackbar_periodic', 'pose':'TRACK', 'hand':'any', 'callback': 'trackbar',"trigger":"periodic", "first_trigger_delay":0.5, "next_trigger_delay": 0.3},
     ]
 }
 
