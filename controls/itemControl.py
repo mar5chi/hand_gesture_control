@@ -59,6 +59,36 @@ def trace_index_finger_tip(event):
     x, y = event.hand.landmarks[8,:2]
     print(f"Index finger tip : x={x}  y={y}") 
 
+def select(index):
+    global selections
+    if 'area' not in selections:
+        area_list = list(item_tree)
+        if len(area_list) > index:
+            area = area_list[index]
+            select_area(area)
+        else:
+            audio_fb(f'Sorry, there is no area {index + 1}, please select another area.')
+    elif 'function' not in selections:
+        function_list = list(item_tree[selections['area']])
+        if len(function_list) > index:
+            function = function_list[index]
+            select_function(function)
+        else:
+            audio_fb(f'Sorry, there is no function {index + 1}, please select another function.')
+    elif 'item' not in selections:
+        item_list = list(item_tree[selections['area']][selections['function']])
+        if len(item_list) > index:
+            item_key = item_list[index]
+            select_item(item_key)
+        else:
+            audio_fb(f'Sorry, there is no item {index + 1}, please select another item.')
+    else:
+        audio_fb('Please finish with OK.')
+    print('selections: ') 
+    for k, v in selections.items():
+        print(f'    {k}: {v}')
+    print('------------') 
+
 def select_area(area):
     """This is the function to select the area (e.g. kitchen, whole appartment, ...) 
     according to item_tree configuration."""
@@ -105,7 +135,7 @@ def handle_booltype():
     new_state = 'OFF'
     if current_state == 'OFF':    	# toggle state ON/OFF
         new_state = 'ON'
-    audio_fb(str(f'The {selections["function"]} is {current_state}. Do you like to switch it {new_state}?'))
+    audio_fb(str(f'The {selections["function"]} is {current_state.lower()}. Do you like to switch it {new_state.lower()}?'))
     selections['state'] = new_state
     print(f'state selected: {selections["state"]}.')
 
@@ -133,222 +163,26 @@ def trackbar(event):
             audio_fb(value)
     selections['state'] = str(value)
 
-def one(event):    								# Kitchen, Lighting, item 1
-    global selections
-    event.print_line
-    if 'area' not in selections:
-        area_list = list(item_tree)
-        if len(area_list) > 0:
-            area = area_list[0]
-            select_area(area)
-        else:
-            audio_fb('Sorry, there is no area one, please select another area.')
-    elif 'function' not in selections:
-        function_list = list(item_tree[selections['area']])
-        if len(function_list) > 0:
-            function = function_list[0]
-            select_function(function)
-        else:
-            audio_fb('Sorry, there is no function one, please select another function.')
-    elif 'item' not in selections:
-        item_list = list(item_tree[selections['area']][selections['function']])
-        if len(item_list) > 0:
-            item_key = item_list[0]
-            select_item(item_key)
-        else:
-            audio_fb('Sorry, there is no item one, please select another item.')
-    else:
-        audio_fb('Please finish with OK.')
-    print('selections: ') 
-    for k, v in selections.items():
-        print(f'    {k}: {v}')
-    print('------------') 
+def one(event):     # Kitchen, Lighting, item 1
+    select(0)
 
-def two(event):    # Living Room, Blinds, item 2
-    global selections
-    event.print_line
-    if 'area' not in selections:
-        area_list = list(item_tree)
-        if len(area_list) > 1:
-            area = area_list[1]
-            select_area(area)
-        else:
-            audio_fb('Sorry, theres no area two, please select another area.')
-    elif 'function' not in selections:
-        function_list = list(item_tree[selections['area']])
-        if len(function_list) > 1:
-            function = function_list[1]
-            select_function(function)
-        else:
-            audio_fb('Sorry, theres no function two, please select another function.')
-    elif 'item' not in selections:
-        item_list = list(item_tree[selections['area']][selections['function']])
-        if len(item_list) > 1:
-            item_key = item_list[1]
-            select_item(item_key)
-        else:
-            audio_fb('Sorry, theres no item two, please select another item.')
-    else:
-        audio_fb('Please finish with OK.')
-    print('selections: ') 
-    for k, v in selections.items():
-        print(f'    {k}: {v}')
-    print('------------') 
+def two(event):     # Living Room, Blinds, item 2
+    select(1)
     
 def three(event):   # Bedroom, item 3, ...
-    global selections
-    event.print_line
-    if 'area' not in selections:
-        area_list = list(item_tree)
-        if len(area_list) > 2:
-            area = area_list[2]
-            select_area(area)
-        else:
-            audio_fb('Sorry, theres no area three, please select another area.')
-    elif 'function' not in selections:
-        function_list = list(item_tree[selections['area']])
-        if len(function_list) > 2:
-            function = function_list[2]
-            select_function(function)
-        else:
-            audio_fb('Sorry, theres no function three, please select another function.')
-    elif 'item' not in selections:
-        item_list = list(item_tree[selections['area']][selections['function']])
-        if len(item_list) > 2:
-            item_key = item_list[2]
-            select_item(item_key)
-        else:
-            audio_fb('Sorry, theres no item three, please select another item.')
-    else:
-        audio_fb('Please finish with OK.')
-    print('selections: ') 
-    for k, v in selections.items():
-        print(f'    {k}: {v}')
-    print('------------') 
+    select(2)
 	
-def four(event):   # Seminar Room, item 4, ...
-    global selections
-    event.print_line
-    if 'area' not in selections:
-        area_list = list(item_tree)
-        if len(area_list) > 3:
-            area = area_list[3]
-            select_area(area)
-        else:
-            audio_fb('Sorry, theres no area four, please select another area.')
-    elif 'function' not in selections:
-        function_list = list(item_tree[selections['area']])
-        if len(function_list) > 3:
-            function = function_list[3]
-            select_function(function)
-        else:
-            audio_fb('Sorry, theres no function four, please select another function.')
-    elif 'item' not in selections:
-        item_list = list(item_tree[selections['area']][selections['function']])
-        if len(item_list) > 3:
-            item_key = item_list[3]
-            select_item(item_key)
-        else:
-            audio_fb('Sorry, theres no item four, please select another item.')
-    else:
-        audio_fb('Please finish with OK.')
-    print('selections: ') 
-    for k, v in selections.items():
-        print(f'    {k}: {v}')
-    print('------------') 
+def four(event):    # Seminar Room, item 4, ...
+    select(3)
 	
-def five(event):   # IoT Lab, item 5, ...
-    global selections
-    event.print_line
-    if 'area' not in selections:
-        area_list = list(item_tree)
-        if len(area_list) > 4:
-            area = area_list[4]
-            select_area(area)
-        else:
-            audio_fb('Sorry, theres no area five, please select another area.')
-    elif 'function' not in selections:
-        function_list = list(item_tree[selections['area']])
-        if len(function_list) > 4:
-            function = function_list[4]
-            select_function(function)
-        else:
-            audio_fb('Sorry, theres no function five, please select another function.')
-    elif 'item' not in selections:
-        item_list = list(item_tree[selections['area']][selections['function']])
-        if len(item_list) > 4:
-            item_key = item_list[4]
-            select_item(item_key)
-        else:
-            audio_fb('Sorry, theres no item five, please select another item.')
-    else:
-        audio_fb('Please finish with OK.')
-    print('selections: ') 
-    for k, v in selections.items():
-        print(f'    {k}: {v}')
-    print('------------') 
+def five(event):    # IoT Lab, item 5, ...
+    select(4)
 	
-def six(event):   # Bathroom, item 6, ...
-    global selections
-    event.print_line
-    if 'area' not in selections:
-        area_list = list(item_tree)
-        if len(area_list) > 5:
-            area = area_list[5]
-            select_area(area)
-        else:
-            audio_fb('Sorry, theres no area six, please select another area.')
-    elif 'function' not in selections:
-        function_list = list(item_tree[selections['area']])
-        if len(function_list) > 5:
-            function = function_list[5]
-            select_function(function)
-        else:
-            audio_fb('Sorry, theres no function six, please select another function.')
-    elif 'item' not in selections:
-        item_list = list(item_tree[selections['area']][selections['function']])
-        if len(item_list) > 5:
-            item_key = item_list[5]
-            select_item(item_key)
-        else:
-            audio_fb('Sorry, theres no item six, please select another item.')
-    else:
-        audio_fb('Please finish with OK.')
-    print('selections: ') 
-    for k, v in selections.items():
-        print(f'    {k}: {v}')
-    print('------------') 
+def six(event):     # Bathroom, item 6, ...
+    select(5)
 
-def ten(event):   # Whole appartment central switches, item 10, ...
-    global selections
-    event.print_line
-    if 'area' not in selections:
-        area_list = list(item_tree)
-        if len(area_list) > 9:
-            area = area_list[9]
-            select_area(area)
-        else:
-            audio_fb('Sorry, theres no area ten, please select another area.')
-    elif 'function' not in selections:
-        function_list = list(item_tree[selections['area']])
-        if len(function_list) > 9:
-            function = function_list[9]
-            select_function(function)
-        else:
-            audio_fb('Sorry, theres no function ten, please select another function.')
-    elif 'item' not in selections:
-        item_list = list(item_tree[selections['area']][selections['function']])
-        if len(item_list) > 9:
-            item_key = item_list[9]
-            select_item(item_key)
-        else:
-            audio_fb('Sorry, theres no item ten, please select another item.')
-    else:
-        audio_fb('Please finish with OK.')
-    print('selections: ') 
-    for k, v in selections.items():
-        print(f'    {k}: {v}')
-    print('------------') 
+def ten(event):     # Whole appartment central switches, item 10, ...
+    select(9)
     
 def back(event):
     """ Goes one step back """
@@ -357,9 +191,17 @@ def back(event):
     try:
         rk, rv = selections.popitem()
         print(f'removed: {rk} {rv}')
+        audio_fb("Going back.")
+        if 'area' not in selections:
+            audio_fb("Please select area.")
+        elif 'function' not in selections:
+            audio_fb("Please select function.")
+        elif 'item' not in selections:
+            audio_fb("Please select item.")
     except KeyError:
         # Dictionary is empty
         print('Selections is empty.') 
+        audio_fb("Please select area.")
         
     print('selections: ') 
     for k, v in selections.items():
@@ -416,13 +258,10 @@ config = {
         {'name': '5_right_enter', 'pose':'FIVE', 'hand':'right', 'callback': 'five',"trigger":"enter", "first_trigger_delay":0.3},
         {'name': '6_right_enter', 'pose':'SIX', 'hand':'right', 'callback': 'six',"trigger":"enter", "first_trigger_delay":0.3},
         {'name': '10_right_enter', 'pose':'ALOHA', 'hand':'right', 'callback': 'ten',"trigger":"enter", "first_trigger_delay":0.3},
-        {'name': '12_right_enter', 'pose':'OK', 'hand':'right', 'callback': 'ok',"trigger":"enter", "first_trigger_delay":0.3},
         {'name': '11_right_enter', 'pose':'BACK', 'hand':'right', 'callback': 'back',"trigger":"enter", "first_trigger_delay":0.3},
+        {'name': '12_right_enter', 'pose':'OK', 'hand':'right', 'callback': 'ok',"trigger":"enter", "first_trigger_delay":0.3},
         {'name': '13_right_enter', 'pose':'HORNS', 'hand':'right', 'callback': 'shut_down',"trigger":"enter", "first_trigger_delay":0.3},
-        #{'name': 'trackbar_continuous', 'pose':'TRACK', 'hand':'right', 'callback': 'trackbar',"trigger":"continuous", "first_trigger_delay":0.5, "next_trigger_delay": 0.5},
         {'name': 'trackbar_periodic', 'pose':'TRACK', 'hand':'right', 'callback': 'trackbar',"trigger":"periodic", "first_trigger_delay":0.5, "next_trigger_delay": 0.3},
-        {'name': '1_left_continuous_xy', 'pose':'ONE', 'hand':'left', 'callback': 'trace_index_finger_tip',"trigger":"continuous"},
-        #{'name': '5_periodic_rotation', 'pose':'FIVE', 'callback': 'trace_rotation', "trigger":"periodic", "first_trigger_delay":0, "next_trigger_delay": 0.2},
     ]
 }
 
