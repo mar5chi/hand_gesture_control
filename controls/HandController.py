@@ -1,4 +1,5 @@
 import sys
+
 #sys.path.append("../..")
 sys.path.append("../")
 import datetime
@@ -31,7 +32,7 @@ DEFAULT_CONFIG = {
             'pd_nms_thresh': 0.3,
             'lm_score_thresh': 0.5, 
             'solo': True,
-            'internal_fps': 30,
+            'internal_fps': 20,
             'internal_frame_height': 640,
             'use_gesture': True
         },
@@ -126,15 +127,16 @@ def check_mandatory_keys(dic, mandatory_keys):
         assert k in dic.keys(), f"Mandatory key '{k}' not present in {dic}"
 
 class HandController:
-    def __init__(self, config={}):
-        self.config = merge_config(DEFAULT_CONFIG, config)
+    def __init__(self, ic, config={}):
+        self.itContr = ic
+        self.config = merge_config(DEFAULT_CONFIG, ic.config)
 
         #------------------------------------------------
         #print(f'HandController self.config: {self.config}')
         #------------------------------------------------
         # HandController will run callback functions defined in the calling app
         # self.caller_globals contains the globals from the calling app (including callbacks)
-        self.caller_globals = sys._getframe(1).f_globals # Or vars(sys.modules['__main__'])
+        #self.caller_globals = sys._getframe(1).f_globals # Or vars(sys.modules['__main__'])
         #------------------------------------------------
         #print(f'HandController caller_globals: {self.caller_globals}')
         #------------------------------------------------
@@ -154,7 +156,9 @@ class HandController:
         if tracker_version == 'edge':
             from HandTrackerEdge import HandTracker
         else: # 'host'
-            from HandTracker import HandTracker
+            #from HandTracker import HandTracker
+            print(f'tracker version {tracker_version} not supported on Pi. Continuing with version edge.')
+            from HandTrackerEdge import HandTracker
         # Forcing solo mode and use_gesture
         self.config['tracker']['args']['solo'] = True
         self.config['tracker']['args']['use_gesture'] = True
@@ -273,7 +277,20 @@ class HandController:
             if e.callback == "_DEFAULT_":
                 default_callback(e)
             else:
-                self.caller_globals[e.callback](e)
+                # ----------------------------------------------
+                #print(f'e.callback: {e.callback}')
+                #print(f'e.callback type: {type(e.callback)}')
+                #print(f'e type: {type(e)}')
+                #print(f'self.caller_globals[e.callback] type: {type(self.caller_globals[e.callback])}')
+                #print(f"self.caller_globals['ItemController'] type: {type(self.caller_globals['ItemController'])}")
+                # ----------------------------------------------
+                #self.caller_globals[e.callback](e)
+                #cb = e.callback
+                #self.caller_globals['ItemController'].cb(e)
+                #fxxx = f'ItemController.{e.callback}'
+                #print(f'fxxx: {fxxx}')
+                #eval(fxxx(e))
+                self.itContr.handle_event(e)
 
     def loop(self):
         while True:
@@ -288,12 +305,11 @@ class HandController:
             #------------------------------------
 
             if self.use_renderer:
-                frame = self.renderer.draw(frame, hands, bag)
+                frame = self.renderer.draw(frame, hands, self.itContr.selections, bag)
                 key = self.renderer.waitKey(delay=1)
                 if key == 27 or key == ord('q'):
                     break
         self.renderer.exit()
         self.tracker.exit()
-            
 
 

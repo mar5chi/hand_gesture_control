@@ -51,6 +51,20 @@ class HandTrackerRenderer:
         y = int(x_y[1] * self.tracker.frame_size - self.tracker.pad_h)
         return (x, y)
 
+    def draw_selection(self, selection):
+        current_selection = 'Your Selection:'
+        #dist = 85
+        dist = 30
+        for k, v in selection.items():
+            #current_selection += f' {v}'
+            #text = f'{k}: {v}'
+            text = v
+            (w, h), _ = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, 1, 2)
+            cv2.rectangle(self.frame, (50, dist-h-5), (50 + w, dist+5), (240, 240, 240), -1)
+            # cv2.putText(image, text, org, font, fontScale, color[, thickness[, lineType[, bottomLeftOrigin]]])
+            cv2.putText(self.frame, text, (50, dist), cv2.FONT_HERSHEY_SIMPLEX, 1, (15,15,15), 2)
+            dist += 35
+
     def draw_hand(self, hand):
 
         if self.tracker.use_lm:
@@ -66,11 +80,11 @@ class HandTrackerRenderer:
                     cv2.polylines(self.frame, [np.array(hand.rect_points)], True, (0,255,255), 2, cv2.LINE_AA)
                 if self.show_landmarks:
                     lines = [np.array([hand.landmarks[point] for point in line]).astype(np.int) for line in LINES_HAND]
-                    cv2.polylines(self.frame, lines, False, (255, 0, 0), int(1+thick_coef*3), cv2.LINE_AA)
+                    cv2.polylines(self.frame, lines, False, (255, 255, 255), int(1+thick_coef*1), cv2.LINE_AA)
                     radius = int(1+thick_coef*5)
                     if self.tracker.use_gesture:
                         # color depending on finger state (1=open, 0=close, -1=unknown)
-                        color = { 1: (0,255,0), 0: (0,0,255), -1:(0,255,255)}
+                        color = { 1: (205, 205, 205), 0: (50, 50, 50), -1:(50, 50, 50)}
                         cv2.circle(self.frame, (hand.landmarks[0][0], hand.landmarks[0][1]), radius, color[-1], -1)
                         for i in range(1,5):
                             cv2.circle(self.frame, (hand.landmarks[i][0], hand.landmarks[i][1]), radius, color[hand.thumb_state], -1)
@@ -161,12 +175,13 @@ class HandTrackerRenderer:
             if focus_zone:
                 cv2.rectangle(self.frame, focus_zone[0:2], focus_zone[2:4], (0,255,0),2)
 
-    def draw(self, frame, hands, bag={}):
+    def draw(self, frame, hands, selection, bag={}):
         self.frame = frame
         if bag:
             self.draw_bag(bag)
         for hand in hands:
             self.draw_hand(hand)
+        self.draw_selection(selection)
         return self.frame
 
     def exit(self):
@@ -175,7 +190,7 @@ class HandTrackerRenderer:
 
     def waitKey(self, delay=1):
         if self.show_fps:
-                self.tracker.fps.draw(self.frame, orig=(50,50), size=1, color=(240,180,100))
+                self.tracker.fps.draw(self.frame, orig=(50,40), size=1, color=(240,180,100))
         cv2.imshow("Hand Gesture Control", self.frame)
         if self.output:
             self.output.write(self.frame)

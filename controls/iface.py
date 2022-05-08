@@ -6,7 +6,7 @@ url_string = 'http://10.5.55.3:8080/rest/items'
 test_url_string = 'http://192.168.43.142:8080/rest/items'
 test_url_string2 = 'http://192.168.43.62:8080/rest/items'
 
-url_str = test_url_string2
+url_str = url_string
 
 def get_state(item_name):
     item_url = furl(url_str)
@@ -19,8 +19,11 @@ def get_state(item_name):
         else:
             return 'Error'
     except requests.ConnectTimeout as ct:
-        print('raising HgcException')
+        print('get_state() ConnectTimeout: raising HgcException')
         raise HgcException("Connection time out.")
+    except requests.exceptions.RequestException as re:
+        print("get_state() Error: ", re)
+        raise HgcException("No connection.")
         
 
 def post_state(item_name, state):
@@ -39,5 +42,8 @@ def post_state(item_name, state):
         raise HgcException("Connection time out.")
     except requests.ConnectionError as e:
         print('raising HgcException')
-        raise HgcException("Connection error.")    
+        raise HgcException("Connection error.") 
+    except requests.exceptions.RequestException as re:
+        print("Error: ", re)
+        raise HgcException("No connection.")
 
