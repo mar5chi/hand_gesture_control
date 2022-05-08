@@ -6,8 +6,8 @@ For information on depthai and OAK-D please visit https://docs.luxonis.com/en/la
 This project uses partially modified https://github.com/geaxgx/depthai_hand_tracker.git.
 
 ## Raspberry Pi setup
-This project is tested on a Raspberry Pi 3B+ with \
-Raspberry Pi OS with desktop \
+This project is tested on a Raspberry Pi 3B with \
+Raspberry Pi OS with desktop (32 bit) \
 Release date: October 30th 2021 \
 Kernel version: 5.10 \
 downloaded from https://www.raspberrypi.com/software/operating-systems/ \
