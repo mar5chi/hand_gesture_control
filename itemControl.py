@@ -46,6 +46,12 @@ class ItemController():
         # Trackbar state:
         self.trackbar_state = 0
 
+        # Awake
+        self.awake = False
+
+        # Stores what to show on the display:
+        self.to_display = {}
+
         # Config:
         self.config = {
             'renderer' : {'enable': True},
@@ -61,9 +67,15 @@ class ItemController():
                 {'name': '11_any_enter', 'pose':'BACK', 'hand':'any', 'callback': 'back',"trigger":"enter", "first_trigger_delay":0.3},
                 {'name': '12_any_enter', 'pose':'OK', 'hand':'any', 'callback': 'ok',"trigger":"enter", "first_trigger_delay":0.3},
                 {'name': '13_any_enter', 'pose':'HORNS', 'hand':'any', 'callback': 'shut_down',"trigger":"enter", "first_trigger_delay":1},
+                {'name': '14_any_enter', 'pose':'WAKEUP', 'hand':'any', 'callback': 'wake_up',"trigger":"enter", "first_trigger_delay":1},
                 {'name': 'trackbar_periodic', 'pose':'TRACK', 'hand':'any', 'callback': 'trackbar',"trigger":"periodic", "first_trigger_delay":0.5, "next_trigger_delay": 0.3},
             ]
         }
+
+    def wake_up(self, event):
+        self.audio_fb("Hi, please select area.")
+        self.to_display['wake_up'] = "Hi, please select area ..."
+        self.awake = True
 
     def select(self, index):
         """ Handles the sequence of user selections. """
@@ -247,10 +259,15 @@ class ItemController():
 
         # Clear selections:
         self.selections = {}
+        self.awake = False
 
-    def shut_down(event):
+    def shut_down(self, event):
         """ Shuts down the raspberry pi """
-        subprocess.Popen(['sudo','shutdown','-h','now'])
+        # subprocess.Popen(['sudo','shutdown','-h','now'])
+        self.awake = False
+        self.selections = {}
+        self.audio_fb('Good bye!')
+        print('Good bye!')
     
     def handle_event(self, event):
         print('handle_event(self, event):')
@@ -259,7 +276,9 @@ class ItemController():
         #print(f'locals: {locals()}')
         #print(f'globalss: {globals()}')
         cb = event.callback
-        if cb == 'one':
+        if cb == 'wake_up':
+            self.wake_up(event)
+        elif cb == 'one':
             self.select(0)
         elif cb == 'two':
             self.select(1)
@@ -279,6 +298,8 @@ class ItemController():
             self.back(event)
         elif cb == 'ok':
             self.ok(event)
+        elif cb == 'shut_down':
+            self.shut_down(event)
     
     def start(self):
         #HandController(self.config).loop()

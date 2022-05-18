@@ -437,12 +437,16 @@ class HandTracker:
         d_3_5 = mpu.distance(r.norm_landmarks[3], r.norm_landmarks[5])
         d_2_3 = mpu.distance(r.norm_landmarks[2], r.norm_landmarks[3])
         # ---------------------------------------------------------------
-        d_4_8 = mpu.distance(r.norm_landmarks[4], r.norm_landmarks[8])      # for tracker
-        d_8_16 = mpu.distance(r.norm_landmarks[8], r.norm_landmarks[16])    # for back
+        d_4_8 = mpu.distance(r.norm_landmarks[4], r.norm_landmarks[8])      # thumb - index tip, for tracker
+        d_8_12 = mpu.distance(r.norm_landmarks[8], r.norm_landmarks[12])    # index - middle tip for back and wake_up
+        d_12_16 = mpu.distance(r.norm_landmarks[12], r.norm_landmarks[16])  # middle - ring tip, for back and wake_up
+        d_15_20 = mpu.distance(r.norm_landmarks[15], r.norm_landmarks[20])  # ring - pinky tip,  for back and wake_up
         #print(f'HandTrackerEdge norm_landmarks[4]: {r.norm_landmarks[4]}')
         #print(f'HandTrackerEdge norm_landmarks[8]: {r.norm_landmarks[8]}')
         #print(f'HandTrackerEdge d_4_8: {d_4_8}')
+        #print(f'HandTrackerEdge d_8_12: {d_8_12}')
         #print(f'HandTrackerEdge d_8_16: {d_8_16}')
+        #print(f'HandTrackerEdge d_12_16: {d_12_16}')
         # ---------------------------------------------------------------
         angle0 = mpu.angle(r.norm_landmarks[0], r.norm_landmarks[1], r.norm_landmarks[2])
         angle1 = mpu.angle(r.norm_landmarks[1], r.norm_landmarks[2], r.norm_landmarks[3])
@@ -482,22 +486,22 @@ class HandTracker:
             r.little_state = -1
 
         # Gesture
-        if r.thumb_state == 1 and r.index_state == 1 and r.middle_state == 1 and r.ring_state == 1 and r.little_state == 1:
-            r.gesture = "FIVE"
-        elif r.thumb_state == 0 and r.index_state == 0 and r.middle_state == 0 and r.ring_state == 0 and r.little_state == 0:
+        if r.thumb_state == 0 and r.index_state == 0 and r.middle_state == 0 and r.ring_state == 0 and r.little_state == 0:
             r.gesture = "FIST"
         elif r.thumb_state == 1 and r.index_state == 0 and r.middle_state == 0 and r.ring_state == 0 and r.little_state == 0:
             r.gesture = "OK" 
-        elif r.thumb_state == 0 and r.index_state == 1 and r.middle_state == 1 and r.ring_state == 0 and r.little_state == 0:
-            r.gesture = "TWO"
-        elif r.thumb_state == 0 and r.index_state == 1 and r.middle_state == 0 and r.ring_state == 0 and r.little_state == 0:
-            r.gesture = "ONE"
         elif r.thumb_state == 1 and r.index_state == 1 and r.middle_state == 0 and r.ring_state == 0 and r.little_state == 0:
             r.gesture = "TRACK"
+        elif r.thumb_state == 0 and r.index_state == 1 and r.middle_state == 0 and r.ring_state == 0 and r.little_state == 0:
+            r.gesture = "ONE"
+        elif r.thumb_state == 0 and r.index_state == 1 and r.middle_state == 1 and r.ring_state == 0 and r.little_state == 0:
+            r.gesture = "TWO"
         elif r.thumb_state == 1 and r.index_state == 1 and r.middle_state == 1 and r.ring_state == 0 and r.little_state == 0:
             r.gesture = "THREE"
         elif r.thumb_state == 0 and r.index_state == 1 and r.middle_state == 1 and r.ring_state == 1 and r.little_state == 1:
             r.gesture = "FOUR"
+        elif r.thumb_state == 1 and r.index_state == 1 and r.middle_state == 1 and r.ring_state == 1 and r.little_state == 1:
+            r.gesture = "FIVE"
         #----------------------------------------------------------------------------------------------------------------------
         elif r.thumb_state == 0 and r.index_state == 1 and r.middle_state == 1 and r.ring_state == 1 and r.little_state == 0:
             r.gesture = "SIX"
@@ -512,8 +516,12 @@ class HandTracker:
         #print(f'HandTrackerEdge recognize_gesture: {r.gesture}')
         if r.gesture is not None:
             r.distance_4_8 = d_4_8
-        if r.gesture == 'FOUR' and d_8_16 < 0.21:
-            r.gesture = 'BACK'
+        if r.gesture == 'FOUR':
+            if d_8_12 < 0.1 and d_12_16 < 0.15 and d_15_20 < 0.1:
+                r.gesture = 'BACK'
+            elif d_8_12 < 0.1 and d_12_16 >= 0.15 and d_15_20 < 0.1:
+                r.gesture = 'WAKEUP'
+                #print("WAKEUP")
         # ---------------------------------------------------------------
             
 

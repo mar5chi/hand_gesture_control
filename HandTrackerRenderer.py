@@ -190,7 +190,7 @@ class HandTrackerRenderer:
 
     def waitKey(self, delay=1):
         if self.show_fps:
-                self.tracker.fps.draw(self.frame, orig=(50,40), size=1, color=(240,180,100))
+                self.tracker.fps.draw(self.frame, orig=(400,40), size=1, color=(240,180,100))
         cv2.imshow("Hand Gesture Control", self.frame)
         if self.output:
             self.output.write(self.frame)

@@ -6,7 +6,7 @@ import datetime
 from time import monotonic
 
 #----------------------------------------------------------------------
-ALL_POSES = ["ONE","TWO","THREE","FOUR","FIVE","SIX","FIST","TRACK","BACK","OK", "ALOHA", "HORNS"]
+ALL_POSES = ["ONE","TWO","THREE","FOUR","FIVE","SIX","FIST","TRACK","BACK","OK", "ALOHA", "HORNS", "WAKEUP"]
 #----------------------------------------------------------------------
 
 # Default values for config parameters
@@ -32,7 +32,7 @@ DEFAULT_CONFIG = {
             'pd_nms_thresh': 0.3,
             'lm_score_thresh': 0.5, 
             'solo': True,
-            'internal_fps': 20,
+            'internal_fps': 30,
             'internal_frame_height': 640,
             'use_gesture': True
         },
@@ -128,7 +128,7 @@ def check_mandatory_keys(dic, mandatory_keys):
 
 class HandController:
     def __init__(self, ic, config={}):
-        self.itContr = ic
+        self.item_controller = ic
         self.config = merge_config(DEFAULT_CONFIG, ic.config)
 
         #------------------------------------------------
@@ -290,7 +290,11 @@ class HandController:
                 #fxxx = f'ItemController.{e.callback}'
                 #print(f'fxxx: {fxxx}')
                 #eval(fxxx(e))
-                self.itContr.handle_event(e)
+                if e.callback == "wake_up":
+                    self.item_controller.wake_up(e)
+                else:
+                    if self.item_controller.awake == True:
+                        self.item_controller.handle_event(e)
 
     def loop(self):
         while True:
@@ -305,7 +309,7 @@ class HandController:
             #------------------------------------
 
             if self.use_renderer:
-                frame = self.renderer.draw(frame, hands, self.itContr.selections, bag)
+                frame = self.renderer.draw(frame, hands, self.item_controller.selections, bag)
                 key = self.renderer.waitKey(delay=1)
                 if key == 27 or key == ord('q'):
                     break
