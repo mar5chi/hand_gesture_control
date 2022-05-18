@@ -72,8 +72,13 @@ In a terminal enter:
 sudo nano /etc/xdg/lxsession/LXDE-pi/autostart
 ```
   
-  Add following line at the end of the autostart file: \
-  \<path to your install folder\>/myvenv/bin/python \<path to your install folder\>/itemControl.py \
+  Add following line at the end of the autostart file: 
+  
+  /\<path to your install folder\>/myvenv/bin/python /\<path to your install folder\>/itemControl.py 
+  
+  for example if you installed the hand gesture control in /home/pi/HGC the line looks like this: \
+  /home/pi/HGC/hand_gesture_control/myvenv/bin/python /home/pi/HGC/hand_gesture_control/itemControl.py 
+  
   Press CTRL+S to save and CTRL+X to exit nano 
 
 ```console
