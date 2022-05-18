@@ -26,19 +26,32 @@ git clone https://github.com/mar5chi/hand_gesture_control.git
 
 ### 4. Create virtual environment
 cd hand_gesture_control/ \
+#### Create virtual environment with name myvenv: 
 python3 -m venv myvenv \
+#### Activate the virtual environment: 
 source myvenv/bin/activate \
+#### Update pip, setuptools, wheel: 
 pip install -U pip \
+pip install -U setuptools \
+pip install -U wheel \
+#### Install requirements:
 python3 -m pip install -r requirements.txt
 
 ### 5. Run hand gesture control
-cd controls/ \
-python3 itemControl.py
+(cd controls/) \
+To make sure your virtual environment is activated enter in the terminal: \
+which python \
+this should show the <path to your virtual environment>/bin/python 
 
-###  - Or add hgc_service
-To run hand gesture control automatically after each reboot, \
-add hgc_service.service file into /etc/systemd/system \
-then enable the service using following command: \
-sudo systemctl enable hgc_service.service \
-To disable the service: \
-sudo systemctl disable hgc_service.service
+#### In your activated environment run:
+python itemControl.py
+
+###  Optional - autostart hand gesture control on reboot: 
+In a terminal enter: \
+sudo nano /etc/xdg/lxsession/LXDE-pi/autostart
+  
+  Add following line at the end of the autostart file: \
+  \<path to your install folder\>/myvenv/bin/python \<path to your install folder\>/itemControl.py \
+  Press CTRL+S to save then CTRL+X to exit nano \
+    
+sudo reboot
