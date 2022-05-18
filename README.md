@@ -25,15 +25,15 @@ in a folder of your choice open a terminal and enter: \
 git clone https://github.com/mar5chi/hand_gesture_control.git
 
 ### 4. Create virtual environment
-cd hand_gesture_control/ \
+cd hand_gesture_control/ 
 #### Create virtual environment with name myvenv: 
-python3 -m venv myvenv \
+python3 -m venv myvenv 
 #### Activate the virtual environment: 
-source myvenv/bin/activate \
+source myvenv/bin/activate 
 #### Update pip, setuptools, wheel: 
 pip install -U pip \
 pip install -U setuptools \
-pip install -U wheel \
+pip install -U wheel 
 #### Install requirements:
 python3 -m pip install -r requirements.txt
 
