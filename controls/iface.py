@@ -6,7 +6,7 @@ url_string = 'http://10.5.55.3:8080/rest/items'
 test_url_string = 'http://192.168.43.142:8080/rest/items'
 test_url_string2 = 'http://192.168.43.62:8080/rest/items'
 
-url_str = url_string
+url_str = test_url_string2
 
 def get_state(item_name):
     item_url = furl(url_str)
