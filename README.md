@@ -74,7 +74,7 @@ sudo nano /etc/xdg/lxsession/LXDE-pi/autostart
   
   Add following line at the end of the autostart file: \
   \<path to your install folder\>/myvenv/bin/python \<path to your install folder\>/itemControl.py \
-  Press CTRL+S to save then CTRL+X to exit nano \
+  Press CTRL+S to save and CTRL+X to exit nano 
 
 ```console
 sudo reboot
