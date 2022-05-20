@@ -1,10 +1,10 @@
 
 import marshal
 from math import sin, cos, atan2, pi, degrees, floor, dist
-pad_h = 252
-img_h = 648
-img_w = 1152
-frame_size = 1152
+pad_h = 175
+img_h = 450
+img_w = 800
+frame_size = 800
 crop_w = 0
 def send_result(buf, type, lm_score=0, handedness=0, rect_center_x=0, rect_center_y=0, rect_size=0, rotation=0, rrn_lms=0, sqn_lms=0, xyz=0, xyz_zone=0):
     result = dict([("type", type), ("lm_score", lm_score), ("handedness", handedness), ("rotation", rotation),

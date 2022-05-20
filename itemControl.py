@@ -46,11 +46,11 @@ class ItemController():
         # Trackbar state:
         self.trackbar_state = 0
 
-        # Awake
+        # Awake (when True: ready to recognize gestures other than the wakeup gesture)
         self.awake = False
 
         # Stores what to show on the display:
-        self.to_display = {}
+        self.to_display = 'I am sleeping, please wake me up ...'
 
         # Config:
         self.config = {
@@ -73,36 +73,39 @@ class ItemController():
         }
 
     def wake_up(self, event):
-        self.audio_fb("Hi, please select area.")
-        self.to_display['wake_up'] = "Hi, please select area ..."
+        fb = "Hi, please select area..."
+        self.feedback(fb)
         self.awake = True
 
     def select(self, index):
         """ Handles the sequence of user selections. """
-        #global selections
         if 'area' not in self.selections:
             area_list = list(self.item_tree)
             if len(area_list) > index:
                 area = area_list[index]
                 self.select_area(area)
             else:
-                self.audio_fb(f'Sorry, there is no area {index + 1}, please select another area.')
+                fb = f'Sorry, there is no area {index + 1}, please select another area.'
+                self.feedback(fb)
         elif 'function' not in self.selections:
             function_list = list(self.item_tree[self.selections['area']])
             if len(function_list) > index:
                 function = function_list[index]
                 self.select_function(function)
             else:
-                self.audio_fb(f'Sorry, there is no function {index + 1}, please select another function.')
+                fb = f'Sorry, there is no function {index + 1}, please select another function.'
+                self.feedback(fb)
         elif 'item' not in self.selections:
             item_list = list(self.item_tree[self.selections['area']][self.selections['function']])
             if len(item_list) > index:
                 item_key = item_list[index]
                 self.select_item(item_key)
             else:
-                self.audio_fb(f'Sorry, there is no item {index + 1}, please select another item.')
+                fb = f'Sorry, there is no item {index + 1}, please select another item.'
+                self.feedback(fb)
         else:
-            self.audio_fb('Please finish with OK.')
+            fb = 'Please finish with OK.'
+            self.feedback(fb)
         print('selections: ') 
         for k, v in self.selections.items():
             print(f'    {k}: {v}')
@@ -112,20 +115,21 @@ class ItemController():
         """ This is the function to select the area (e.g. kitchen, whole appartment, ...) 
         according to item_tree configuration. """
         self.selections['area'] = area
-        self.audio_fb(f'You selected {area}, please select function.')
+        fb = f'You selected {area}, please select function.'
+        self.feedback(fb)
         print(f'area selected: {area}.')
 
     def select_function(self, function):
         """ This is the function to select the function (e.g. light, blind, temperature, ...) 
         according to item_tree configuration. """
         self.selections['function'] = function
-        self.audio_fb(f'OK, which {function}?')
+        fb = f'OK, which {function}?'
+        self.feedback(fb)
         print(f'function selected: {function}.')
 
     def select_item(self, item_key):
         """ This is the function to select the item (e.g. dinner table light, ...) 
         according to item_tree configuration. """
-        #global selections
         print(f'item selected: {item_key}.')
         item = self.item_tree[self.selections['area']][self.selections['function']][item_key] # dict
         if isinstance(item, dict):
@@ -135,21 +139,26 @@ class ItemController():
             if item_name:
                 self.selections['item'] = item_name
                 if item_label:
-                    self.audio_fb(f'You selected {item_label}.')
+                    fb = f'You selected {item_label}.'
+                    self.feedback(fb)
                 else:
-                    self.audio_fb(f'You selected {item_name}.')
+                    fb = f'You selected {item_name}.'
+                    self.feedback(fb)
                 if item_type:
                     if item_type == 'bool':
                         self.handle_booltype()
                     elif item_type == 'percentage':
                         self.handle_percentagetype()
                 else:
-                    self.audio_fb('Sorry, item type not found. Please check configuration file or make another selection.')
+                    fb = 'Sorry, item type not found. Please check configuration file or make another selection.'
+                    self.feedback(fb)
                     del self.selections['item']
             else:
-                self.audio_fb('Sorry, item name not found. Please check configuration file or make another selection.')
+                fb = 'Sorry, item name not found. Please check configuration file or make another selection.'
+                self.feedback(fb)
         else:
-            self.audio_fb('Sorry, wrong item format. Please check configuration file or make another selection.')
+            fb = 'Sorry, wrong item format. Please check configuration file or make another selection.'
+            self.feedback(fb)
 
     def handle_booltype(self):
         # GET current state:
@@ -160,11 +169,13 @@ class ItemController():
             new_state = 'OFF'
             if current_state == 'OFF':    	# toggle state ON/OFF
                 new_state = 'ON'
-            self.audio_fb(str(f'The {self.selections["function"]} is {current_state.lower()}. Do you like to switch it {new_state.lower()}?'))
+            fb = str(f'The {self.selections["function"]} is {current_state.lower()}. Do you like to switch it {new_state.lower()}?')
+            self.feedback(fb)
             self.selections['state'] = new_state
             print(f'state selected: {self.selections["state"]}.')
         except HgcException as he:
-            self.audio_fb(f'Sorry, could not get current state. {he.args[0]} Please check connection to rest API.')
+            fb = f'Sorry, could not get current state. {he.args[0]} Please check connection to rest API.'
+            self.feedback(fb)
             # Clear selections:
             self.selections = {}
             # TODO: maybe sys.exit(he.args[0]) after this?
@@ -175,9 +186,11 @@ class ItemController():
             current_state = iface.get_state(self.selections['item'])
             self.selections['current state'] = current_state
             print(f'current state: {current_state}.')
-            self.audio_fb(str(f'The {self.selections["function"]} is {current_state} percent. How much do you like?'))
+            fb = str(f'The {self.selections["function"]} is {current_state} percent. How much do you like?')
+            self.feedback(fb)
         except HgcException as he:
-            self.audio_fb(f'Sorry, could not get current state. {he.args[0]} Please check connection to rest API.')
+            fb = f'Sorry, could not get current state. {he.args[0]} Please check connection to rest API.'
+            self.feedback(fb)
             # Clear selections:
             self.selections = {}
             # TODO: maybe sys.exit(he.args[0]) after this?
@@ -194,9 +207,10 @@ class ItemController():
                 print(f"trackbar: value = {value}") 
                 self.trackbar_state = value
                 if value == 0:
+                    self.to_display = '0'
                     self.audio_fb('zero')
                 else:
-                    self.audio_fb(value)
+                    self.feedback(str(value))
             self.selections['state'] = str(value)
 
     def back(self, event):
@@ -206,27 +220,27 @@ class ItemController():
         try:
             rk, rv = self.selections.popitem()
             print(f'removed: {rk} {rv}')
-            self.audio_fb("Going back.")
+            self.feedback("Going back.")
             if 'area' not in self.selections:
-                self.audio_fb("Please select area.")
+                self.feedback("Please select area ...")
             elif 'function' not in self.selections:
-                self.audio_fb("Please select function.")
+                self.feedback("Please select function ...")
             elif 'item' not in self.selections:
-                self.audio_fb("Please select item.")
+                self.feedback("Please select item ...")
         except KeyError:
             # Dictionary is empty
             print('Selections is empty.') 
-            self.audio_fb("Please select area.")
+            self.feedback("Please select area ...")
 
         print('selections: ') 
         for k, v in self.selections.items():
             print(f'    {k}: {v}')
         print('------------') 
 
-    def quit_selections(self, event):
-        """ Quits all selections and starts from the beginning. """
-        # Clear selections:
-        self.selections = {}
+    #def quit_selections(self, event):
+    #    """ Quits all selections and starts from the beginning. """
+    #    # Clear selections:
+    #    self.selections = {}
 
     def audio_fb(self, text):
         """ Gives auditive feedback. """
@@ -236,13 +250,12 @@ class ItemController():
 
     def ok(self, event):
         """ Completes the input, posts state. """
-        #global selections
         event.print_line()
         print('selections: ') 
         for k, v in self.selections.items():
             print(f'    {k}: {v}')
         print('------------') 
-        self.audio_fb("OK!")
+        self.feedback("OK!")
 
         # Post state:
         if 'item' in self.selections and 'state' in self.selections:
@@ -254,7 +267,8 @@ class ItemController():
         else:
             print('ERROR: item or state missing.')
             r = 'Error: item or state missing.'
-        self.audio_fb(f'Request is {r}.')
+        fb = f'Request is {r}.'
+        self.feedback(fb)
         print(f'Request is {r}.')
 
         # Clear selections:
@@ -266,8 +280,9 @@ class ItemController():
         # subprocess.Popen(['sudo','shutdown','-h','now'])
         self.awake = False
         self.selections = {}
-        self.audio_fb('Good bye!')
-        print('Good bye!')
+        fb = 'I am sleeping, please wake me up ...'
+        self.feedback(fb)
+        print(fb)
     
     def handle_event(self, event):
         print('handle_event(self, event):')
@@ -301,6 +316,10 @@ class ItemController():
         elif cb == 'shut_down':
             self.shut_down(event)
     
+    def feedback(self, feedback):
+        self.to_display = str(feedback)
+        self.audio_fb(feedback)
+    
     def start(self):
         #HandController(self.config).loop()
         HandController(self).loop()
@@ -308,7 +327,6 @@ class ItemController():
 
 
 def main():
-    print(f'itemControl.main(): __name__ is {__name__}')
     itemControl = ItemController()
     #print(itemControl.config)
     itemControl.start()

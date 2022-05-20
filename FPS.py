@@ -33,7 +33,6 @@ class FPS: # To measure the number of frame per second
 
     def draw(self, win, orig=(10,30), font=cv2.FONT_HERSHEY_SIMPLEX, size=2, color=(0,255,0), thickness=2):
         cv2.putText(win,f"FPS={self.get():.2f}",orig,font,size,color,thickness)
-        #pass
 
 if __name__ == "__main__":
     fps = FPS()

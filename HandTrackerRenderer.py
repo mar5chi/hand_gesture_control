@@ -36,7 +36,7 @@ class HandTrackerRenderer:
             self.show_scores = False
 
         self.show_xyz_zone = self.show_xyz = self.tracker.xyz
-        self.show_fps = True
+        self.show_fps = False
         self.show_body = False # self.tracker.body_pre_focusing is not None
         self.show_inferences_status = False
 
@@ -51,19 +51,40 @@ class HandTrackerRenderer:
         y = int(x_y[1] * self.tracker.frame_size - self.tracker.pad_h)
         return (x, y)
 
-    def draw_selection(self, selection):
+    def draw_selection(self, todisplay, selection):
         current_selection = 'Your Selection:'
+        font = cv2.FONT_HERSHEY_PLAIN
+        #font = cv2.FONT_HERSHEY_COMPLEX_SMALL
+        font_thickness = 1
+        dist_x = 20
         #dist = 85
         dist = 30
+        frame_width = self.tracker.frame_size
+        print(f'frame_width: {frame_width}')
+        # Draw todisplay:
+        # getTextSize (const String &text, int fontFace, double fontScale, int thickness, int *baseLine)
+        #(w, h), _ = cv2.getTextSize(todisplay, cv2.FONT_HERSHEY_PLAIN, 1, 2)
+        #print(f'text_size: ({w}, {h}), {_}')
+        #(w, h), _ = cv2.getTextSize(todisplay, cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, 2)
+        #print(f'text_size: ({w}, {h}), {_}')
+        #(w, h), _ = cv2.getTextSize(todisplay, cv2.FONT_HERSHEY_SIMPLEX, 1, 2)
+        #print(f'text_size: ({w}, {h}), {_}')
+        
+        (w, h), _ = cv2.getTextSize(todisplay, font, 1, font_thickness)
+        cv2.rectangle(self.frame, (dist_x, dist-h-5), (dist_x + w, dist+5), (240, 240, 240), -1)
+        # cv2.putText(image, text, org, font, fontScale, color[, thickness[, lineType[, bottomLeftOrigin]]])
+        cv2.putText(self.frame, todisplay, (dist_x, dist), font, 1, (15,15,15), font_thickness)
+        dist += (h + 13)
+        # Draw user selections:
         for k, v in selection.items():
             #current_selection += f' {v}'
             #text = f'{k}: {v}'
             text = v
-            (w, h), _ = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, 1, 2)
-            cv2.rectangle(self.frame, (50, dist-h-5), (50 + w, dist+5), (240, 240, 240), -1)
+            (w, h), _ = cv2.getTextSize(text, font, 1, 2)
+            cv2.rectangle(self.frame, (dist_x + 30, dist-h-5), (50 + w, dist+5), (240, 240, 240), -1)
             # cv2.putText(image, text, org, font, fontScale, color[, thickness[, lineType[, bottomLeftOrigin]]])
-            cv2.putText(self.frame, text, (50, dist), cv2.FONT_HERSHEY_SIMPLEX, 1, (15,15,15), 2)
-            dist += 35
+            cv2.putText(self.frame, text, (dist_x + 30, dist), font, 1, (15,15,15), font_thickness)
+            dist += (h + 13)
 
     def draw_hand(self, hand):
 
@@ -175,13 +196,13 @@ class HandTrackerRenderer:
             if focus_zone:
                 cv2.rectangle(self.frame, focus_zone[0:2], focus_zone[2:4], (0,255,0),2)
 
-    def draw(self, frame, hands, selection, bag={}):
+    def draw(self, frame, hands, todisplay, selection, bag={}):
         self.frame = frame
         if bag:
             self.draw_bag(bag)
         for hand in hands:
             self.draw_hand(hand)
-        self.draw_selection(selection)
+        self.draw_selection(todisplay, selection)
         return self.frame
 
     def exit(self):
@@ -190,7 +211,8 @@ class HandTrackerRenderer:
 
     def waitKey(self, delay=1):
         if self.show_fps:
-                self.tracker.fps.draw(self.frame, orig=(400,40), size=1, color=(240,180,100))
+            # Put it in the right upper corner, self.tracker.frame_size is the width of the frame
+            self.tracker.fps.draw(self.frame, orig=(self.tracker.frame_size - 200, 65), size=1, color=(240,180,100))
         cv2.imshow("Hand Gesture Control", self.frame)
         if self.output:
             self.output.write(self.frame)

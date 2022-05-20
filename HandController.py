@@ -33,7 +33,8 @@ DEFAULT_CONFIG = {
             'lm_score_thresh': 0.5, 
             'solo': True,
             'internal_fps': 30,
-            'internal_frame_height': 640,
+            #'internal_frame_height': 640,
+            'internal_frame_height': 450,
             'use_gesture': True
         },
     },
@@ -309,7 +310,7 @@ class HandController:
             #------------------------------------
 
             if self.use_renderer:
-                frame = self.renderer.draw(frame, hands, self.item_controller.selections, bag)
+                frame = self.renderer.draw(frame, hands, self.item_controller.to_display, self.item_controller.selections, bag)
                 key = self.renderer.waitKey(delay=1)
                 if key == 27 or key == ord('q'):
                     break
