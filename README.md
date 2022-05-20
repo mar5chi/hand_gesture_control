@@ -53,7 +53,20 @@ Install requirements:
 python3 -m pip install -r requirements.txt
 ```
 
-### 5. Run hand gesture control
+### 5. Add UDEV rule for OAK-D device
+To check if the OAK-D is connected, enter in a terminal:
+```console
+lsusb | grep MyriadX
+```
+The output should be similar to: Bus 003 Device 002: ID 03e7:2485 Intel Movidius MyriadX
+
+Add the udev rule before you use the device for the first time on a new OS. This rule is nessessary to access the device correctly. To add and apply the rule, please enter in a terminal: 
+```console
+echo 'SUBSYSTEM=="usb", ATTRS{idVendor}=="03e7", MODE="0666"' | sudo tee /etc/udev/rules.d/80-movidius.rules
+sudo udevadm control --reload-rules && sudo udevadm trigger
+```
+
+### 6. Run hand gesture control
 (cd controls/) \
 Optional - To check if your virtual environment is activated enter in the terminal: 
 ```console
