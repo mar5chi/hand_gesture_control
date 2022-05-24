@@ -44,9 +44,7 @@ source myvenv/bin/activate
 ```
 Update pip, setuptools, wheel: 
 ```console
-pip install -U pip 
-pip install -U setuptools 
-pip install -U wheel 
+pip install -U pip setuptools wheel 
 ```
 Install requirements:
 ```console
