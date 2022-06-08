@@ -132,18 +132,7 @@ class HandController:
         self.item_controller = ic
         self.config = merge_config(DEFAULT_CONFIG, ic.config)
 
-        #------------------------------------------------
-        #print(f'HandController self.config: {self.config}')
-        #------------------------------------------------
-        # HandController will run callback functions defined in the calling app
-        # self.caller_globals contains the globals from the calling app (including callbacks)
-        #self.caller_globals = sys._getframe(1).f_globals # Or vars(sys.modules['__main__'])
-        #------------------------------------------------
-        #print(f'HandController caller_globals: {self.caller_globals}')
-        #------------------------------------------------
-
-        # Parse pose config
-        # Pose list is stored in self.poses
+        # Parse pose config (Pose list is stored in self.poses)
         self.parse_poses()
 
         # Keep records of previous pose status 
@@ -151,15 +140,12 @@ class HandController:
 
         # HandTracker
         tracker_version = self.config['tracker']['version']
-        #--------------------------------------------
-        print(f'tracker version: {tracker_version}')
-        #--------------------------------------------
         if tracker_version == 'edge':
             from HandTrackerEdge import HandTracker
         else: # 'host'
             #from HandTracker import HandTracker
             print(f'tracker version {tracker_version} not supported on Pi. Continuing with version edge.')
-            from HandTrackerEdge import HandTracker
+            pass
         # Forcing solo mode and use_gesture
         self.config['tracker']['args']['solo'] = True
         self.config['tracker']['args']['use_gesture'] = True
@@ -217,9 +203,6 @@ class HandController:
                 mandatory_args = { k:pa[k] for k in mandatory_keys}
                 all_args = merge_dicts(mandatory_args, optional_args)
                 self.pose_actions.append(all_args)
-            #--------------------------------------------------
-            #print(f'HandController pose_actions: {self.pose_actions}')
-            #--------------------------------------------------
             
 
     def generate_events(self, hands):
@@ -278,19 +261,6 @@ class HandController:
             if e.callback == "_DEFAULT_":
                 default_callback(e)
             else:
-                # ----------------------------------------------
-                #print(f'e.callback: {e.callback}')
-                #print(f'e.callback type: {type(e.callback)}')
-                #print(f'e type: {type(e)}')
-                #print(f'self.caller_globals[e.callback] type: {type(self.caller_globals[e.callback])}')
-                #print(f"self.caller_globals['ItemController'] type: {type(self.caller_globals['ItemController'])}")
-                # ----------------------------------------------
-                #self.caller_globals[e.callback](e)
-                #cb = e.callback
-                #self.caller_globals['ItemController'].cb(e)
-                #fxxx = f'ItemController.{e.callback}'
-                #print(f'fxxx: {fxxx}')
-                #eval(fxxx(e))
                 if e.callback == "wake_up":
                     self.item_controller.wake_up(e)
                 else:
@@ -305,9 +275,6 @@ class HandController:
             self.frame_nb += 1
             events = self.generate_events(hands)
             self.process_events(events)
-            #------------------------------------
-            #print(f'HandController use_renderer: {self.use_renderer}')
-            #------------------------------------
 
             if self.use_renderer:
                 frame = self.renderer.draw(frame, hands, self.item_controller.to_display, self.item_controller.selections, bag)
@@ -316,5 +283,3 @@ class HandController:
                     break
         self.renderer.exit()
         self.tracker.exit()
-
-

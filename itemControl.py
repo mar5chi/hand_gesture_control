@@ -73,9 +73,15 @@ class ItemController():
         }
 
     def wake_up(self, event):
-        fb = "Hi, please select area..."
-        self.feedback(fb)
-        self.awake = True
+        if self.awake:
+            self.awake = False
+            fb = "I am sleeping, please wake me up ..."
+            self.feedback(fb)
+            self.selections = {}
+        else:
+            fb = "Hi, please select area..."
+            self.feedback(fb)
+            self.awake = True
 
     def select(self, index):
         """ Handles the sequence of user selections. """
@@ -275,14 +281,14 @@ class ItemController():
         self.selections = {}
         self.awake = False
 
-    def shut_down(self, event):
-        """ Shuts down the raspberry pi """
-        # subprocess.Popen(['sudo','shutdown','-h','now'])
-        self.awake = False
-        self.selections = {}
-        fb = 'I am sleeping, please wake me up ...'
-        self.feedback(fb)
-        print(fb)
+    #def shut_down(self, event):
+    #    """ Shuts down the raspberry pi """
+    #    # subprocess.Popen(['sudo','shutdown','-h','now'])
+    #    self.awake = False
+    #    self.selections = {}
+    #    fb = 'I am sleeping, please wake me up ...'
+    #    self.feedback(fb)
+    #    print(fb)
     
     def handle_event(self, event):
         print('handle_event(self, event):')
