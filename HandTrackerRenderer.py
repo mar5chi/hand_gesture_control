@@ -45,7 +45,6 @@ class HandTrackerRenderer:
         return (x, y)
 
     def draw_selection(self, todisplay, selection):
-        current_selection = 'Your Selection:'
         font = cv2.FONT_HERSHEY_PLAIN
         font_thickness = 1
         dist_x = 20
@@ -58,8 +57,9 @@ class HandTrackerRenderer:
         dist_y += (h + 13)
         # Draw user selections:
         for k, v in selection.items():
-            #current_selection += f' {v}'
             #text = f'{k}: {v}'
+            if k == 'item' and 'label' in selection:  # show label not name if it's in selection
+                continue
             text = v
             (w, h), _ = cv2.getTextSize(text, font, 1, 2)
             cv2.rectangle(self.frame, (dist_x + 30, dist_y-h-5), (50 + w, dist_y+5), (240, 240, 240), -1)

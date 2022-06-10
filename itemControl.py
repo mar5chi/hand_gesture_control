@@ -145,6 +145,7 @@ class ItemController():
             if item_name:
                 self.selections['item'] = item_name
                 if item_label:
+                    self.selections['label'] = item_label
                     fb = f'You selected {item_label}.'
                     self.feedback(fb)
                 else:
