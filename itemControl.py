@@ -83,6 +83,12 @@ class ItemController():
             self.feedback(fb)
             self.awake = True
 
+    def sleep_after_2s(self):
+        #time.sleep(2)
+        self.awake = False
+        fb = "I am sleeping, please wake me up ..."
+        self.feedback(fb)
+
     def select(self, index):
         """ Handles the sequence of user selections. """
         if 'area' not in self.selections:
@@ -171,26 +177,37 @@ class ItemController():
         # GET current state:
         try:
             current_state = iface.get_state(self.selections['item'])
-            self.selections['current state'] = current_state
-            print(f'current state: {current_state}.')
-            new_state = 'OFF'
-            if current_state == 'OFF':    	# toggle state ON/OFF
-                new_state = 'ON'
-            fb = str(f'The {self.selections["function"]} is {current_state.lower()}. Do you like to switch it {new_state.lower()}?')
-            self.feedback(fb)
-            self.selections['state'] = new_state
-            print(f'state selected: {self.selections["state"]}.')
+            # TODO: make this better
+            if current_state.startswith('Error'):
+                fb = f'Sorry, could not get current state. {current_state} Please check configuration.'
+                self.feedback(fb)
+                # Clear selections:
+                self.selections = {}
+                self.awake = False
+            else:
+                self.selections['current state'] = current_state
+                print(f'current state: {current_state}.')
+
+                new_state = 'OFF'
+                if current_state == 'OFF':    	# toggle state ON/OFF
+                    new_state = 'ON'
+                fb = str(f'The {self.selections["function"]} is {current_state.lower()}. Do you like to switch it {new_state.lower()}?')
+                self.feedback(fb)
+                self.selections['state'] = new_state
+                print(f'state selected: {self.selections["state"]}.')
         except HgcException as he:
             fb = f'Sorry, could not get current state. {he.args[0]} Please check connection to rest API.'
             self.feedback(fb)
             # Clear selections:
             self.selections = {}
+            self.awake = False
             # TODO: maybe sys.exit(he.args[0]) after this?
 
     def handle_percentagetype(self):
         # GET current state:
         try:
             current_state = iface.get_state(self.selections['item'])
+            # TODO: make this better
             self.selections['current state'] = current_state
             print(f'current state: {current_state}.')
             fb = str(f'The {self.selections["function"]} is {current_state} percent. How much do you like?')
@@ -273,14 +290,21 @@ class ItemController():
                 # TODO: maybe sys.exit(he.args[0]) after this?
         else:
             print('ERROR: item or state missing.')
-            r = 'Error: item or state missing.'
-        fb = f'Request is {r}.'
+            r = 'Sorry, can not set state: item or state missing.'
+        #fb = f'Request is {r}.'
+        if r == 'OK':
+            item_label = self.selections.get('label')
+            item_text = item_label if item_label else self.selections['item']
+            fb = f"{self.selections['area']} {item_text} is now {self.selections['state']}."
+        else:
+            fb = f'{r}'
         self.feedback(fb)
         print(f'Request is {r}.')
 
         # Clear selections:
         self.selections = {}
         self.awake = False
+        #self.sleep_after_2s()
 
     #def shut_down(self, event):
     #    """ Shuts down the raspberry pi """

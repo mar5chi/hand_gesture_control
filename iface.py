@@ -14,17 +14,18 @@ def get_state(item_name):
     try:
         r = requests.get(item_url.url, timeout=5)
         print(f'GET request status_code: {r.status_code}')
+        print(f'GET request text: {r.text}')
+        print(f'GET request reason: {r.reason}')
         if r.status_code == 200:    # 200 OK
             return r.text
         else:
-            return 'Error'
+            return f'Error {r.status_code}: {r.reason}'
     except requests.ConnectTimeout as ct:
         print('get_state() ConnectTimeout: raising HgcException')
         raise HgcException("Connection time out.")
     except requests.exceptions.RequestException as re:
         print("get_state() Error: ", re)
         raise HgcException("No connection.")
-        
 
 def post_state(item_name, state):
     item_url = furl(url_str)
@@ -34,7 +35,10 @@ def post_state(item_name, state):
     headers = {'Content-type': 'text/plain'}
     try:
         r = requests.post(item_url.url, state, headers=headers, timeout=5)
-        print(f'request status_code: {r.status_code}')
+        # TODO: add 404 Not Found, etc.
+        print(f'POST request status_code: {r.status_code}')
+        print(f'POST request text: {r.text}')
+        print(f'POST request reason: {r.reason}')
         if r.status_code == 200:    # 200 OK 
             return 'OK'
     except requests.ConnectTimeout as ct:

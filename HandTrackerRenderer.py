@@ -58,7 +58,7 @@ class HandTrackerRenderer:
         # Draw user selections:
         for k, v in selection.items():
             #text = f'{k}: {v}'
-            if k == 'item' and 'label' in selection:  # show label not name if it's in selection
+            if k == 'item' and 'label' in selection:  # show label,  not name, if it's in selection
                 continue
             text = v
             (w, h), _ = cv2.getTextSize(text, font, 1, 2)
