@@ -63,7 +63,10 @@ class ItemController():
                 {'name': '4_any_enter', 'pose':'FOUR', 'hand':'any', 'callback': 'four',"trigger":"enter", "first_trigger_delay":0.3},
                 {'name': '5_any_enter', 'pose':'FIVE', 'hand':'any', 'callback': 'five',"trigger":"enter", "first_trigger_delay":0.3},
                 {'name': '6_any_enter', 'pose':'SIX', 'hand':'any', 'callback': 'six',"trigger":"enter", "first_trigger_delay":0.3},
-                {'name': '10_any_enter', 'pose':'ALOHA', 'hand':'any', 'callback': 'ten',"trigger":"enter", "first_trigger_delay":0.3},
+                {'name': '7_any_enter', 'pose':'SEVEN', 'hand':'any', 'callback': 'seven',"trigger":"enter", "first_trigger_delay":0.3},
+                {'name': '8_any_enter', 'pose':'EIGHT', 'hand':'any', 'callback': 'eight',"trigger":"enter", "first_trigger_delay":0.3},
+                {'name': '9_any_enter', 'pose':'NINE', 'hand':'any', 'callback': 'nine',"trigger":"enter", "first_trigger_delay":0.3},
+                {'name': '10_any_enter', 'pose':'TEN', 'hand':'any', 'callback': 'ten',"trigger":"enter", "first_trigger_delay":0.3},
                 {'name': '11_any_enter', 'pose':'BACK', 'hand':'any', 'callback': 'back',"trigger":"enter", "first_trigger_delay":0.3},
                 {'name': '12_any_enter', 'pose':'OK', 'hand':'any', 'callback': 'ok',"trigger":"enter", "first_trigger_delay":0.3},
                 {'name': '13_any_enter', 'pose':'HORNS', 'hand':'any', 'callback': 'shut_down',"trigger":"enter", "first_trigger_delay":1},
@@ -295,7 +298,11 @@ class ItemController():
         if r == 'OK':
             item_label = self.selections.get('label')
             item_text = item_label if item_label else self.selections['item']
-            fb = f"{self.selections['area']} {item_text} is now {self.selections['state']}."
+            fb = f"{self.selections['area']} {item_text} is now {self.selections['state']}"
+            if self.selections['state'] is 'ON' or self.selections['state'] is 'OFF':
+                fb = fb + '.'
+            else:
+                fb = fb + ' percent.'
         else:
             fb = f'{r}'
         self.feedback(fb)
@@ -336,6 +343,12 @@ class ItemController():
             self.select(4)
         elif cb == 'six':
             self.select(5)
+        elif cb == 'seven':
+            self.select(6)
+        elif cb == 'eight':
+            self.select(7)
+        elif cb == 'nine':
+            self.select(8)
         elif cb == 'ten':
             self.select(9)
         elif cb == 'trackbar':

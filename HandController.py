@@ -6,7 +6,7 @@ import datetime
 from time import monotonic
 
 #----------------------------------------------------------------------
-ALL_POSES = ["ONE","TWO","THREE","FOUR","FIVE","SIX","FIST","TRACK","BACK","OK", "ALOHA", "HORNS", "WAKEUP"]
+ALL_POSES = ["ONE","TWO","THREE","FOUR","FIVE","SIX", "SEVEN", "EIGHT", "NINE", "TEN", "FIST","TRACK","BACK","OK", "HORNS", "WAKEUP"]
 #----------------------------------------------------------------------
 
 # Default values for config parameters
